@@ -7,7 +7,7 @@ const app = express();
 
 
 app.get("/health", (req, res) => {
-  res.status(200).json({status:"API is healthy"});
+  res.status(200).json({status:"API is healthy and running"});
 });
 
 app.listen(ENV.PORT, ()=>{
