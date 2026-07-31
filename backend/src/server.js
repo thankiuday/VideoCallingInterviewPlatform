@@ -1,30 +1,30 @@
 import express from "express";
 import dotenv from "dotenv";
 import path from "path";
-import { fileURLToPath } from "url";
-import { ENV } from "./lib/env.js";
+import { ENV } from "./lib/.env";
 
-dotenv.config({ path: path.resolve(process.cwd(), ".env") });
 
+dotenv.config();
 const app = express();
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+
+const __dirname = path.resolve();
+
 
 app.get("/health", (req, res) => {
-  res.status(200).json({ status: "API is healthy and running" });
+  res.status(200).json({status:"API is healthy and running"});
 });
 
-console.log("NODE_ENV", ENV.NODE_ENV);
-
-if (ENV.NODE_ENV === "production") {
-  const frontendDistPath = path.resolve(__dirname, "..", "..", "frontend", "dist");
-  app.use(express.static(frontendDistPath));
-
-  app.get("*", (req, res) => {
-    res.sendFile(path.join(frontendDistPath, "index.html"));
-  });
+ console.log("NODE_ENV",ENV.NODE_ENV);
+// make our app ready for deployment
+if(ENV.NODE_ENV === "production"){
+   
+    app.use(express.static(path.join(__dirname, "../frontend/dist")));
+    app.get("/{*any}",(req,res)=>{
+        res.sendFile(path.join(__dirname, "../frontend", "dist","index.html"));
+    }
+    )
 }
 
-app.listen(ENV.PORT, () => {
-  console.log("Server is running on port", ENV.PORT);
-});
+app.listen(ENV.PORT, ()=>{
+    console.log("Server is running on port",ENV.PORT);
+})
